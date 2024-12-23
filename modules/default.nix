@@ -1,0 +1,3 @@
+{
+  srcds = ./srcds;
+}
