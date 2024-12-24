@@ -1,7 +1,7 @@
 # srcds-nix
 
 > [!WARNING]
-> WORK IN PROGRESS - Probably not functional, definitely not stable
+> WORK IN PROGRESS - Probably not functional, definitely not stable. If you use this then you should recognize that options could change in totally breaking ways up until I decide that it's stable.
 
 Manage and run Source Dedicated Server games on NixOS.
 
