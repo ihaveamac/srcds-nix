@@ -7,6 +7,8 @@ Manage and run Source Dedicated Server games on NixOS.
 
 # Games
 
+I am aware some games are missing here, I'll add them eventually. For now if you want a missing game, set `appId`, `allowUnknownId`, and `gameFolder`.
+
 | Game | AppID | Game Folder |
 | --- | --- | --- |
 | Left 4 Dead | 222840 | left4dead |
@@ -42,7 +44,7 @@ boolean
 ` true `
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -58,7 +60,7 @@ Game servers to run\. Each attribute name will store server files in a different
 attribute set of (submodule)
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -79,7 +81,7 @@ boolean
 ` false `
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -95,28 +97,71 @@ Steam AppID for the game’s dedicated server\.
 signed integer
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
-## services\.srcds\.games\.\<name>\.extraConVarArgs
+## services\.srcds\.games\.\<name>\.extraArgs
 
 
 
-Additional ConVar arguments (the ones that start with ` + `) to pass to ` srcds_run `\.
+Additional arguments (the ones that start with ` - `) to pass to ` srcds_run `\. For ConVar arguments, check ` extraConVarArgs `\. For arguments with no value, use ` null ` as the value\.
 
 
 
 *Type:*
-attribute set of string
+attribute set of (null or string)
 
 
 
 *Default:*
 ` { } `
 
+
+
+*Example:*
+
+```
+{
+  replay = null;
+  timeout = "0";
+}
+```
+
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
+## services\.srcds\.games\.\<name>\.extraCommandArgs
+
+
+
+Additional command and ConVar arguments (the ones that start with ` + `) to pass to ` srcds_run `\. For commands with no argument, use ` null ` as the value\.
+
+
+
+*Type:*
+attribute set of (null or string)
+
+
+
+*Default:*
+` { } `
+
+
+
+*Example:*
+
+```
+{
+  randommap = null;
+  sv_pure = "1";
+}
+```
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -142,7 +187,7 @@ string
 ` determined by appId `
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -158,7 +203,7 @@ Game port to open\. This is normally 27015, but is deliberately left without a d
 16 bit unsigned integer; between 0 and 65535 (both inclusive)
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -184,7 +229,7 @@ null or string
 ` "pl_upward" `
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 
@@ -205,7 +250,7 @@ boolean
 ` false `
 
 *Declared by:*
- - [/home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Documents/Projects/srcds-nix/modules/srcds)
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
 
 
 

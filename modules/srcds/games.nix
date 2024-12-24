@@ -30,10 +30,18 @@ in
       type = types.port;
     };
 
-    extraConVarArgs = mkOption {
-      description = "Additional ConVar arguments (the ones that start with `+`) to pass to `srcds_run`.";
-      type = types.attrsOf types.str;
+    extraArgs = mkOption {
+      description = "Additional arguments (the ones that start with `-`) to pass to `srcds_run`. For ConVar arguments, check `extraConVarArgs`. For arguments with no value, use `null` as the value.";
+      type = types.attrsOf (types.nullOr types.str);
       default = {};
+      example = { timeout = "0"; replay = null; };
+    };
+
+    extraCommandArgs = mkOption {
+      description = "Additional command and ConVar arguments (the ones that start with `+`) to pass to `srcds_run`. For commands with no argument, use `null` as the value.";
+      type = types.attrsOf (types.nullOr types.str);
+      default = {};
+      example = { sv_pure = "1"; randommap = null; };
     };
 
     startingMap = mkOption {

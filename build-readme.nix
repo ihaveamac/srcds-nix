@@ -15,6 +15,8 @@ Manage and run Source Dedicated Server games on NixOS.
 
 # Games
 
+I am aware some games are missing here, I'll add them eventually. For now if you want a missing game, set `appId`, `allowUnknownId`, and `gameFolder`.
+
 | Game | AppID | Game Folder |
 | --- | --- | --- |
 ${concatStringsSep "\n" (mapAttrsToList (n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |") gameInfo.gameIds)}

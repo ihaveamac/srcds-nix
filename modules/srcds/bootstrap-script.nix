@@ -16,10 +16,14 @@
   stateDir,
   # Steam AppID
   appId,
+  # Requires workaround to download
+  windowsWorkaround,
   # Game port
   gamePort,
   # Extra ConVar arguments
-  extraConVarArgs,
+  extraArgs,
+  # Extra ConVar arguments
+  extraCommandArgs,
   # Starting map
   startingMap
 }:
@@ -27,12 +31,11 @@
 let
   eStateDir = lib.escapeShellArg stateDir;
   sAppId = toString appId;
-  sExtraConVarArgs = lib.concatStringsSep " " (
+  sExtraCommandArgs = lib.concatStringsSep " " (
     lib.mapAttrsToList (n: v:
-      "+${n} ${lib.escapeShellArg v}"
-    ) (extraConVarArgs //
-      (lib.optionalAttrs (startingMap != null) { map = startingMap; })
-    )
+      "+${n} ${if v != null then lib.escapeShellArg v else ""}"
+    ) ((lib.optionalAttrs (startingMap != null) { map = startingMap; }) //
+      extraCommandArgs) # this is put at the end to allow for manual overrides
   );
 in
 {
@@ -46,16 +49,29 @@ in
       fi
     }
     mkdir -p ${eStateDir}
-    chown ${user}:${group} ${eStateDir}
   '';
   run = ''
     action=Initializing
     if test -d ${eStateDir}/${gameFolder}; then
       action=Updating
     fi
+    cd ${eStateDir};
     echo "$action ${gameName} (${gameStateName})"
+
+    ${if windowsWorkaround then ''
+    if test -f srcds_linux; then
+      steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} validate +exit
+    else
+      # the server for ${gameName} requires a workaround to download for Linux
+      # (or we don't know if it does, in which case, we will do it anyway)
+      steamcmd +force_install_dir ${eStateDir} +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} validate +exit
+      steamcmd +force_install_dir ${eStateDir} +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} validate +exit
+    fi
+    '' else ''
     steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} validate +exit
+    ''}
+
     echo "Running ${gameName} (${gameStateName})"
-    steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind ${sExtraConVarArgs}
+    steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind -usercon ${sExtraCommandArgs}
   '';
 }

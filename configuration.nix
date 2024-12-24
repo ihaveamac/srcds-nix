@@ -4,11 +4,12 @@
   imports = [ ./modules/srcds ];
 
   services.srcds.enable = true;
-  services.srcds.games.tf2 = {
+  services.srcds.games.cstrike = {
     appId = 232330;
     gamePort = 27015;
     startingMap = "cs_office";
-    extraConVarArgs.sv_password = "ihaveahax";
+    extraArgs.rcon = null;
+    extraCommandArgs.sv_password = "ihaveahax";
   };
 
   boot.enableContainers = false;

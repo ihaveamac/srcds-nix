@@ -9,6 +9,7 @@ let
   getGameFolder = v: if v.gameFolder != "AUTOMATIC" then v.gameFolder else (gameInfo.get v.appId).folder;
   getGameName = v: let gi = gameInfo.get v.appId; in if gi == null then "Unknown SRCDS" else gi.game;
   mkScripts = import ./bootstrap-script.nix;
+  needsWorkaround = v: let gi = gameInfo.get v.appId; in if gi == null then true else gi.windowsWorkaround;
 in
 {
   options.services.srcds = {
@@ -29,14 +30,6 @@ in
   config = mkIf cfg.enable {
     assertions = filter (v: v.message != null) (mapAttrsToList (n: v: { assertion = false; message = gameInfo.checkAssertion n v; }) cfg.games);
     warnings = filter (v: v != null) (mapAttrsToList (n: v: gameInfo.checkWarning n v) cfg.games);
-    environment.etc = listToAttrs (
-      mapAttrsToList (n: v: let
-        gameFolder = getGameFolder v;
-      in {
-        name = "srcds/${n}";
-        value = { text = "APPID=${toString v.appId}\nGAMEFOLDER=${escapeShellArg gameFolder}\n"; };
-      }) cfg.games
-    );
 
     # TODO: make this support other users
     users.users = optionalAttrs (username == "srcds") {
@@ -55,9 +48,10 @@ in
       mapAttrsToList (n: v: let
         gameFolder = getGameFolder v;
         gameName = getGameName v;
+        windowsWorkaround = needsWorkaround v;
         scripts = mkScripts {
-          inherit pkgs lib gameFolder gameName;
-          inherit (v) appId gamePort extraConVarArgs startingMap;
+          inherit pkgs lib gameFolder gameName windowsWorkaround;
+          inherit (v) appId gamePort extraArgs extraCommandArgs startingMap;
           user = username;
           group = username;
           gameStateName = n;
@@ -74,9 +68,11 @@ in
           script = scripts.run;
           path = with pkgs; [ steamcmd steam-run ];
           serviceConfig = {
-            WorkingDirectory = "/var/lib/srcds/${n}";
+            StateDirectory = "srcds";
+            StateDirectoryMode = "0775";
             User = username;
             Group = username;
+            UMask = "0002";
           };
         };
       }) cfg.games
