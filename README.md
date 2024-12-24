@@ -237,7 +237,7 @@ null or string
 
 
 
-Open game firewall ports for all defined servers\. This can be overridden per-server by setting each one’s ` openGameFirewall ` option\.
+CURRENTLY NOT IMPLEMENTED\. Open game firewall ports for all defined servers\. This can be overridden per-server by setting each one’s ` openGameFirewall ` option\.
 
 
 

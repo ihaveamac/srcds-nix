@@ -16,7 +16,7 @@ in
     enable = mkEnableOption "the Source Dedicated Server module";
     
     openGameFirewall = mkOption {
-      description = "Open game firewall ports for all defined servers. This can be overridden per-server by setting each one's `openGameFirewall` option.";
+      description = "CURRENTLY NOT IMPLEMENTED. Open game firewall ports for all defined servers. This can be overridden per-server by setting each one's `openGameFirewall` option.";
       type = types.bool;
       default = false;
     };
