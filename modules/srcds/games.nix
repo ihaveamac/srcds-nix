@@ -12,6 +12,13 @@ in
       type = types.int;
     };
 
+    branch = mkOption {
+      description = "Beta branch to download and update the server from.";
+      type = types.str;
+      default = "public";
+      example = "prerelease";
+    };
+
     allowUnknownId = mkOption {
       description = "Allow an unknown AppID. The option `gameFolder` must be set if this is used.";
       type = types.bool;

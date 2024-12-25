@@ -16,6 +16,8 @@
   stateDir,
   # Steam AppID
   appId,
+  # Branch
+  branch,
   # Requires workaround to download
   windowsWorkaround,
   # Game port
@@ -45,11 +47,8 @@ let
   #    extraCommandArgs) # this is put at the end to allow for manual overrides
   #);
   sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) (
-    filter (v: v != null) (lists.flatten (
-      [
-        "-port" (toString gamePort)
-      ] ++ (optional (startingMap != null) [ "+map" startingMap ])
-      # TODO: the rcon password stuff should probably be moved to the server.cfg
+    filter (v: v != null) (lists.flatten ( []
+      ++ (optional (startingMap != null) [ "+map" startingMap ])
       ++ (optional (rcon.enable) "-usercon")
       ++ extraArgs))));
 in
@@ -66,7 +65,7 @@ in
 
       # since it does exist, make sure it's nix-managed
       header=$(head -n 1 "$1")
-      if [[ "x$header" == "x#NIX-MANAGED" ]]; then
+      if [[ "x$header" == "x//NIX-MANAGED" ]]; then
         return 0;
       else
         return 1;
@@ -82,7 +81,7 @@ in
 
     ${if windowsWorkaround then ''
     if test -f srcds_linux; then
-      steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} validate +exit
+      steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
     else
       # the server for ${gameName} requires a workaround to download for Linux
       # (or we don't know if it does, in which case, we will do it anyway)
@@ -101,8 +100,9 @@ in
     fi
     echo "Writing server.cfg"
     cp ${serverCfg} ${gameFolder}/cfg/server.cfg
+    chmod 664 ${gameFolder}/cfg/server.cfg
 
     echo "Running ${gameName} (${gameStateName})"
-    steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind ${sExtraArgs}
+    steam-run ./srcds_run -console -game ${gameFolder} -port ${toString gamePort} +ip 0.0.0.0 -nohltv -strictportbind ${sExtraArgs}
   '';
 }

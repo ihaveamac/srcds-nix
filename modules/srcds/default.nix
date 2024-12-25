@@ -58,6 +58,23 @@ in
       ) cfg.games
     );
 
+    systemd.sockets = listToAttrs (
+      mapAttrsToList (n: v: {
+        name = "srcds-${n}";
+        value = {
+          partOf = [ "srcds-${n}.service" ];
+          socketConfig = {
+            ListenFIFO = "%t/srcds-${n}.stdin";
+            SocketMode = "0660";
+            SocketUser = username;
+            SocketGroup = username;
+            RemoveOnStop = true;
+            FlushPending = true;
+          };
+        };
+      }) cfg.games
+    );
+
     systemd.services = listToAttrs (
       mapAttrsToList (n: v: let
         gameFolder = getGameFolder v;
@@ -65,7 +82,7 @@ in
         windowsWorkaround = needsWorkaround v;
         scripts = mkScripts {
           inherit pkgs lib gameFolder gameName windowsWorkaround;
-          inherit (v) appId gamePort extraArgs startingMap rcon config extraConfig;
+          inherit (v) appId branch gamePort extraArgs startingMap rcon config extraConfig;
           user = username;
           group = username;
           gameStateName = n;
@@ -76,8 +93,9 @@ in
         value = {
           description = "Server runner for ${gameName} (${n})";
           wants = [ "network-online.target" ];
-          after = [ "network-online.target" ];
+          after = [ "network-online.target" "srcds-${n}.socket" ];
           wantedBy = [ "multi-user.target" ];
+          requires = [ "srcds-${n}.socket" ];
           preStart = scripts.prepare;
           script = scripts.run;
           path = with pkgs; [ steamcmd steam-run ];
@@ -87,6 +105,9 @@ in
             User = username;
             Group = username;
             UMask = "0002";
+            StandardInput = "socket";
+            StandardOutput = "journal";
+            StandardError = "journal";
           };
         };
       }) cfg.games

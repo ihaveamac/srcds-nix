@@ -18,11 +18,6 @@
       echo test
     '';
   };
-  services.srcds.games.swarm = {
-    appId = 635;
-    gamePort = 1;
-    gameFolder = "swarm";
-  };
 
   boot.enableContainers = false;
   boot.isContainer = true;
