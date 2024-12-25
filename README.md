@@ -27,6 +27,27 @@ I am aware some games are missing here, I'll add them eventually. For now if you
 | Garry's Mod | 4020 | garrysmod |
 | Counter-Strike: Global Offensive | 740 | csgo |
 
+# Example
+
+This will set up a server for Counter-Strike: Source, and enable RCON. Server files will be stored at `/var/lib/srcds/my-css-server`.
+
+```nix
+services.srcds = {
+  enable = true;
+  openFirewall = true;
+  games = {
+    my-css-server = {
+      appId = 232330;
+      gamePort = 27015;
+      rcon = {
+        enable = true;
+        password = "secretpass";
+      };
+    };
+  };
+};
+```
+
 # Module options
 ## services\.srcds\.enable
 

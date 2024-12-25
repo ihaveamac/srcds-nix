@@ -25,6 +25,27 @@ let
     | --- | --- | --- |
     ${concatStringsSep "\n" (mapAttrsToList (n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |") gameInfo.gameIds)}
 
+    # Example
+
+    This will set up a server for Counter-Strike: Source, and enable RCON. Server files will be stored at `/var/lib/srcds/my-css-server`.
+
+    ```nix
+    services.srcds = {
+      enable = true;
+      openFirewall = true;
+      games = {
+        my-css-server = {
+          appId = 232330;
+          gamePort = 27015;
+          rcon = {
+            enable = true;
+            password = "secretpass";
+          };
+        };
+      };
+    };
+    ```
+
     # Module options
   '';
 in pkgs.mkShellNoCC {
