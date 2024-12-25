@@ -25,6 +25,24 @@ let
     | --- | --- | --- |
     ${concatStringsSep "\n" (mapAttrsToList (n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |") gameInfo.gameIds)}
 
+    # Install
+
+    ## Flake
+
+    Add this repo to your flake inputs:
+    ```nix
+    srcds-nix.url = "github:ihaveamac/srcds.nix";
+    ```
+
+    Add `srcds-nix` to the `outputs` arguments.
+
+    Add to `modules` of the NixOS system:
+    ```
+    modules = [
+      srcds-nix.nixosModules.default
+    ];
+    ```
+
     # Example
 
     This will set up a server for Counter-Strike: Source, enable RCON, and configure it. Server files will be stored at `/var/lib/srcds/my-css-server`.

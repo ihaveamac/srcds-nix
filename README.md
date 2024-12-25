@@ -27,6 +27,24 @@ I am aware some games are missing here, I'll add them eventually. For now if you
 | Garry's Mod | 4020 | garrysmod |
 | Counter-Strike: Global Offensive | 740 | csgo |
 
+# Install
+
+## Flake
+
+Add this repo to your flake inputs:
+```nix
+srcds-nix.url = "github:ihaveamac/srcds.nix";
+```
+
+Add `srcds-nix` to the `outputs` arguments.
+
+Add to `modules` of the NixOS system:
+```
+modules = [
+  srcds-nix.nixosModules.default
+];
+```
+
 # Example
 
 This will set up a server for Counter-Strike: Source, enable RCON, and configure it. Server files will be stored at `/var/lib/srcds/my-css-server`.
