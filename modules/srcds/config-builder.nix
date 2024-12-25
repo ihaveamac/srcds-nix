@@ -26,15 +26,16 @@ writeText "server.cfg" ''
 # -----------------------------------------------------------------
 
 ${lib.optionalString rcon.enable ''
+# RCON (services.srcds.games.${gameStateName}.rcon)
 rcon_password ${if rcon.password == "nixos" then
   (warn "the RCON password for ${gameStateName} is the default \"${rcon.password}\", you should change this by setting services.srcds.games.${gameStateName}.rcon.password" rcon.password)
   else rcon.password}
 ''}
 
-# config
+# services.srcds.games.${gameStateName}.config
 ${sConfig}
 
-# extraConfig
+# services.srcds.games.${gameStateName}.extraConfig
 ${extraConfig}
 
 # Execute local commands.

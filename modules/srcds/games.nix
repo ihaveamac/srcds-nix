@@ -54,7 +54,7 @@ in
     config = mkOption {
       description = "Configuration to put in `<gamedir>/cfg/server.cfg`. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting. To store local configuration not managed by NixOS, put commands in `<gamedir>/cfg/server_local.cfg`.";
       type = with types; attrsOf (oneOf [ str int ]);
-      default = { hostname = "My NixOS TF2 server"; sv_pure = 0; };
+      default = { hostname = "My NixOS TF2 server"; sv_pure = 0; sv_contact = "you@example.com"; };
     };
 
     extraConfig = mkOption {

@@ -61,15 +61,15 @@ in
     nonExistantOrNixManaged () {
       # check if it doesn't exist first
       if [[ ! -f "$1" ]]; then
-        return 1;
+        return 0;
       fi
 
       # since it does exist, make sure it's nix-managed
       header=$(head -n 1 "$1")
       if [[ "x$header" == "x#NIX-MANAGED" ]]; then
-        return 1;
-      else
         return 0;
+      else
+        return 1;
       fi
     }
 

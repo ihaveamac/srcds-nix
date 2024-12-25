@@ -2,7 +2,7 @@
 <!--
   EDIT build-readme.nix INSTEAD OF THIS FILE
 
-  cat $(nix-build --no-out-link build-readme.nix) > README.md
+  nix-shell build-readme.nix
 -->
 
 > [!WARNING]
@@ -28,7 +28,6 @@ I am aware some games are missing here, I'll add them eventually. For now if you
 | Counter-Strike: Global Offensive | 740 | csgo |
 
 # Module options
-
 ## services\.srcds\.enable
 
 Whether to enable the Source Dedicated Server module\.
@@ -124,6 +123,7 @@ attribute set of (string or signed integer)
 ```
 {
   hostname = "My NixOS TF2 server";
+  sv_contact = "you@example.com";
   sv_pure = 0;
 }
 ```
@@ -348,6 +348,5 @@ boolean
 
 *Declared by:*
  - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
-
 
 
