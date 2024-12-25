@@ -15,8 +15,8 @@ in
   options.services.srcds = {
     enable = mkEnableOption "the Source Dedicated Server module";
     
-    openGameFirewall = mkOption {
-      description = "CURRENTLY NOT IMPLEMENTED. Open game firewall ports for all defined servers. This can be overridden per-server by setting each one's `openGameFirewall` option.";
+    openFirewall = mkOption {
+      description = "Whether to open firewall ports for all defined servers. This can be overridden per-server by setting each one's `openFirewall` option.";
       type = types.bool;
       default = false;
     };
@@ -44,6 +44,18 @@ in
 
     environment.systemPackages = with pkgs; [ steamcmd ];
 
+    networking.firewall.allowedUDPPorts = filter (v: v != null) (
+      mapAttrsToList (n: v:
+        if v.openFirewall then v.gamePort else null
+      ) cfg.games
+    );
+
+    #networking.firewall.allowedTCPPorts = filter (v: v != null) (
+    #  mapAttrsToList (n: v:
+    #    if v.openFirewall and v.rcon.enable then v.gamePort else null
+    #  ) cfg.games
+    #);
+
     systemd.services = listToAttrs (
       mapAttrsToList (n: v: let
         gameFolder = getGameFolder v;
@@ -51,7 +63,7 @@ in
         windowsWorkaround = needsWorkaround v;
         scripts = mkScripts {
           inherit pkgs lib gameFolder gameName windowsWorkaround;
-          inherit (v) appId gamePort extraArgs extraCommandArgs startingMap;
+          inherit (v) appId gamePort extraArgs startingMap;
           user = username;
           group = username;
           gameStateName = n;

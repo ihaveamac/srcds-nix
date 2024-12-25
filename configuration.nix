@@ -4,12 +4,12 @@
   imports = [ ./modules/srcds ];
 
   services.srcds.enable = true;
+  services.srcds.openFirewall = true;
   services.srcds.games.cstrike = {
     appId = 232330;
     gamePort = 27015;
     startingMap = "cs_office";
-    extraArgs.rcon = null;
-    extraCommandArgs.sv_password = "ihaveahax";
+    extraArgs = [ "-usercon" ];
   };
 
   boot.enableContainers = false;

@@ -22,21 +22,26 @@
   gamePort,
   # Extra ConVar arguments
   extraArgs,
-  # Extra ConVar arguments
-  extraCommandArgs,
   # Starting map
   startingMap
 }:
 
+with lib;
 let
-  eStateDir = lib.escapeShellArg stateDir;
+  eStateDir = escapeShellArg stateDir;
   sAppId = toString appId;
-  sExtraCommandArgs = lib.concatStringsSep " " (
-    lib.mapAttrsToList (n: v:
-      "+${n} ${if v != null then lib.escapeShellArg v else ""}"
-    ) ((lib.optionalAttrs (startingMap != null) { map = startingMap; }) //
-      extraCommandArgs) # this is put at the end to allow for manual overrides
-  );
+  #sExtraArgs = lib.concatStringsSep " " (
+  #  lib.mapAttrsToList (n: v:
+  #    "+${n} ${if v != null then lib.escapeShellArg v else ""}"
+  #  ) ((lib.optionalAttrs (startingMap != null) { map = startingMap; }) //
+  #    extraCommandArgs) # this is put at the end to allow for manual overrides
+  #);
+  sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) (
+    filter (v: v != null) (lists.flatten (
+      [
+        "-port" (toString gamePort)
+      ] ++ (optional (startingMap != null) [ "+map" startingMap ])
+      ++ extraArgs))));
 in
 {
   prepare = ''
@@ -72,6 +77,6 @@ in
     ''}
 
     echo "Running ${gameName} (${gameStateName})"
-    steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind -usercon ${sExtraCommandArgs}
+    steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind ${sExtraArgs}
   '';
 }

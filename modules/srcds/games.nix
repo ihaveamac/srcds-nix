@@ -25,23 +25,22 @@ in
       defaultText = literalExpression "determined by appId";
     };
 
+    openFirewall = mkOption {
+      description = "Whether to open firewall ports for this server.";
+      type = types.bool;
+      default = globalcfg.openFirewall;
+    };
+
     gamePort = mkOption {
       description = "Game port to open. This is normally 27015, but is deliberately left without a default value to avoid conflicts with multiple servers.";
       type = types.port;
     };
 
     extraArgs = mkOption {
-      description = "Additional arguments (the ones that start with `-`) to pass to `srcds_run`. For ConVar arguments, check `extraConVarArgs`. For arguments with no value, use `null` as the value.";
-      type = types.attrsOf (types.nullOr types.str);
-      default = {};
-      example = { timeout = "0"; replay = null; };
-    };
-
-    extraCommandArgs = mkOption {
-      description = "Additional command and ConVar arguments (the ones that start with `+`) to pass to `srcds_run`. For commands with no argument, use `null` as the value.";
-      type = types.attrsOf (types.nullOr types.str);
-      default = {};
-      example = { sv_pure = "1"; randommap = null; };
+      description = "Additional arguments to pass to `srcds_run`.";
+      type = types.listOf types.str;
+      default = [];
+      example = [ "-timeout" "0" "-nobots" "+randommap" ];
     };
 
     startingMap = mkOption {

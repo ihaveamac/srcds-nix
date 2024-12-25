@@ -105,59 +105,29 @@ signed integer
 
 
 
-Additional arguments (the ones that start with ` - `) to pass to ` srcds_run `\. For ConVar arguments, check ` extraConVarArgs `\. For arguments with no value, use ` null ` as the value\.
+Additional arguments to pass to ` srcds_run `\.
 
 
 
 *Type:*
-attribute set of (null or string)
+list of string
 
 
 
 *Default:*
-` { } `
+` [ ] `
 
 
 
 *Example:*
 
 ```
-{
-  replay = null;
-  timeout = "0";
-}
-```
-
-*Declared by:*
- - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
-
-
-
-## services\.srcds\.games\.\<name>\.extraCommandArgs
-
-
-
-Additional command and ConVar arguments (the ones that start with ` + `) to pass to ` srcds_run `\. For commands with no argument, use ` null ` as the value\.
-
-
-
-*Type:*
-attribute set of (null or string)
-
-
-
-*Default:*
-` { } `
-
-
-
-*Example:*
-
-```
-{
-  randommap = null;
-  sv_pure = "1";
-}
+[
+  "-timeout"
+  "0"
+  "-nobots"
+  "+randommap"
+]
 ```
 
 *Declared by:*
@@ -207,6 +177,27 @@ Game port to open\. This is normally 27015, but is deliberately left without a d
 
 
 
+## services\.srcds\.games\.\<name>\.openFirewall
+
+
+
+Whether to open firewall ports for this server\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` false `
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
 ## services\.srcds\.games\.\<name>\.startingMap
 
 
@@ -233,11 +224,11 @@ null or string
 
 
 
-## services\.srcds\.openGameFirewall
+## services\.srcds\.openFirewall
 
 
 
-CURRENTLY NOT IMPLEMENTED\. Open game firewall ports for all defined servers\. This can be overridden per-server by setting each one’s ` openGameFirewall ` option\.
+Whether to open firewall ports for all defined servers\. This can be overridden per-server by setting each one’s ` openFirewall ` option\.
 
 
 
