@@ -29,7 +29,7 @@ I am aware some games are missing here, I'll add them eventually. For now if you
 
 # Example
 
-This will set up a server for Counter-Strike: Source, and enable RCON. Server files will be stored at `/var/lib/srcds/my-css-server`.
+This will set up a server for Counter-Strike: Source, enable RCON, and configure it. Server files will be stored at `/var/lib/srcds/my-css-server`.
 
 ```nix
 services.srcds = {
@@ -42,6 +42,11 @@ services.srcds = {
       rcon = {
         enable = true;
         password = "secretpass";
+      };
+      config = {
+        hostname = "My CSS server on NixOS!";
+        sv_password = "entrypass";
+        sv_contact = "you@example.com";
       };
     };
   };
