@@ -11,10 +11,16 @@ rec {
     "232250" = { game = "Team Fortress 2"; folder = "tf"; windowsWorkaround = false; };
     "244310" = { game = "Source SDK Base 2013"; folder = null; windowsWorkaround = false; };
   };
+  blockedGameIds = {
+    "635" = "There is no Linux version of Alien Swarm Dedicated Server. It also cannot be downloaded with the anonymous account.";
+    "582400" = "There is no Linux version of Alien Swarm: Reactive Drop Dedicated Server.";
+  };
   get = id: if gameIds ? ${toString id} then gameIds.${toString id} else null;
   checkAssertion = name: info:
     let sAppId = toString info.appId; in
-    if !(gameIds ? ${sAppId}) then
+    if (blockedGameIds ? ${sAppId}) then
+      blockedGameIds.${sAppId}
+    else if !(gameIds ? ${sAppId}) then
       if !info.allowUnknownId then
         "Unrecognized App ID ${sAppId} for `services.srcds.games.${name}`. Possible solutions:\n - Did you use the game client ID instead of the dedicated server? For example, Team Fortress 2 Dedicated server is 232250 (the one you want to use), while the client AppID is 440.\n - Is this a typo, or a game server this module is not aware of? If if's really a version of Source Dedicated Server that is unknown to this module, set `services.srcds.games.${name}.allowUnknownId = true`."
       else null
