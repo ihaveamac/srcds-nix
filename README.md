@@ -1,4 +1,9 @@
 # srcds-nix
+<!--
+  EDIT build-readme.nix INSTEAD OF THIS FILE
+
+  cat $(nix-build --no-out-link build-readme.nix) > README.md
+-->
 
 > [!WARNING]
 > WORK IN PROGRESS - Probably not functional, definitely not stable. If you use this then you should recognize that options could change in totally breaking ways up until I decide that it's stable.
@@ -101,6 +106,33 @@ signed integer
 
 
 
+## services\.srcds\.games\.\<name>\.config
+
+
+
+Configuration to put in ` <gamedir>/cfg/server.cfg `\. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting\. To store local configuration not managed by NixOS, put commands in ` <gamedir>/cfg/server_local.cfg `\.
+
+
+
+*Type:*
+attribute set of (string or signed integer)
+
+
+
+*Default:*
+
+```
+{
+  hostname = "My NixOS TF2 server";
+  sv_pure = 0;
+}
+```
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
 ## services\.srcds\.games\.\<name>\.extraArgs
 
 
@@ -128,6 +160,38 @@ list of string
   "-nobots"
   "+randommap"
 ]
+```
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
+## services\.srcds\.games\.\<name>\.extraConfig
+
+
+
+Additional configuration to put at the end of ` <gamedir>/cfg/server.cfg `\.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+` "" `
+
+
+
+*Example:*
+
+```
+''
+  alias thing "say my thing alias"
+  exec thing.cfg
+''
 ```
 
 *Declared by:*
@@ -191,7 +255,49 @@ boolean
 
 
 *Default:*
+` config.services.srcds.openFirewall `
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
+## services\.srcds\.games\.\<name>\.rcon\.enable
+
+
+
+Enable RCON\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
 ` false `
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
+## services\.srcds\.games\.\<name>\.rcon\.password
+
+
+
+Password to use for RCON\.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+` "nixos" `
 
 *Declared by:*
  - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)

@@ -3,6 +3,7 @@
 with lib;
 let
   cfg = config.services.srcds;
+  # this breaks render-doc.nix
   #steamcfg = config.programs.steam;
   username = "srcds";
   gameInfo = import ./get-game-info.nix;
@@ -18,6 +19,7 @@ in
     openFirewall = mkOption {
       description = "Whether to open firewall ports for all defined servers. This can be overridden per-server by setting each one's `openFirewall` option.";
       type = types.bool;
+      #default = steamcfg.dedicatedServer.openFirewall;
       default = false;
     };
     
@@ -50,11 +52,11 @@ in
       ) cfg.games
     );
 
-    #networking.firewall.allowedTCPPorts = filter (v: v != null) (
-    #  mapAttrsToList (n: v:
-    #    if v.openFirewall and v.rcon.enable then v.gamePort else null
-    #  ) cfg.games
-    #);
+    networking.firewall.allowedTCPPorts = filter (v: v != null) (
+      mapAttrsToList (n: v:
+        if v.openFirewall && v.rcon.enable then v.gamePort else null
+      ) cfg.games
+    );
 
     systemd.services = listToAttrs (
       mapAttrsToList (n: v: let
@@ -63,7 +65,7 @@ in
         windowsWorkaround = needsWorkaround v;
         scripts = mkScripts {
           inherit pkgs lib gameFolder gameName windowsWorkaround;
-          inherit (v) appId gamePort extraArgs startingMap;
+          inherit (v) appId gamePort extraArgs startingMap rcon config extraConfig;
           user = username;
           group = username;
           gameStateName = n;

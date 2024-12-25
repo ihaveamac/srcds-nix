@@ -9,7 +9,14 @@
     appId = 232330;
     gamePort = 27015;
     startingMap = "cs_office";
-    extraArgs = [ "-usercon" ];
+    rcon = {
+      enable = true;
+      password = "ihaveahax";
+    };
+    config.hostname = "test";
+    extraConfig = ''
+      echo test
+    '';
   };
 
   boot.enableContainers = false;

@@ -7,6 +7,11 @@ let
 in
 pkgs.writeText "README.md" ''
 # srcds-nix
+<!--
+  EDIT build-readme.nix INSTEAD OF THIS FILE
+
+  cat $(nix-build --no-out-link build-readme.nix) > README.md
+-->
 
 > [!WARNING]
 > WORK IN PROGRESS - Probably not functional, definitely not stable. If you use this then you should recognize that options could change in totally breaking ways up until I decide that it's stable.

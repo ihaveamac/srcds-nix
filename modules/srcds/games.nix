@@ -29,6 +29,7 @@ in
       description = "Whether to open firewall ports for this server.";
       type = types.bool;
       default = globalcfg.openFirewall;
+      defaultText = literalExpression "config.services.srcds.openFirewall";
     };
 
     gamePort = mkOption {
@@ -48,6 +49,35 @@ in
       type = types.nullOr types.str;
       default = null;
       example = "pl_upward";
+    };
+
+    config = mkOption {
+      description = "Configuration to put in `<gamedir>/cfg/server.cfg`. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting. To store local configuration not managed by NixOS, put commands in `<gamedir>/cfg/server_local.cfg`.";
+      type = with types; attrsOf (oneOf [ str int ]);
+      default = { hostname = "My NixOS TF2 server"; sv_pure = 0; };
+    };
+
+    extraConfig = mkOption {
+      description = "Additional configuration to put at the end of `<gamedir>/cfg/server.cfg`.";
+      type = types.str;
+      default = "";
+      example = ''
+        alias thing "say my thing alias"
+        exec thing.cfg
+      '';
+    };
+
+    rcon = {
+      enable = mkOption {
+        description = "Enable RCON.";
+        type = types.bool;
+        default = false;
+      };
+      password = mkOption {
+        description = "Password to use for RCON.";
+        type = types.str;
+        default = "nixos";
+      };
     };
   };
 }

@@ -23,11 +23,19 @@
   # Extra ConVar arguments
   extraArgs,
   # Starting map
-  startingMap
+  startingMap,
+  # RCON settings
+  rcon,
+  # Config for server.cfg
+  config,
+  # Extra config for server.cfg
+  extraConfig
 }:
 
 with lib;
 let
+  configBuilder = import ./config-builder.nix;
+  serverCfg = configBuilder { inherit pkgs gameStateName config extraConfig rcon; };
   eStateDir = escapeShellArg stateDir;
   sAppId = toString appId;
   #sExtraArgs = lib.concatStringsSep " " (
@@ -41,21 +49,30 @@ let
       [
         "-port" (toString gamePort)
       ] ++ (optional (startingMap != null) [ "+map" startingMap ])
+      # TODO: the rcon password stuff should probably be moved to the server.cfg
+      ++ (optional (rcon.enable) "-usercon")
       ++ extraArgs))));
 in
 {
   prepare = ''
-    isNixStoreLink () {
-      link=readlink "$1"
-      if [[ "$link" != /nix/store/* ]]; then
-        return 1
-      else
-        return 0
-      fi
-    }
     mkdir -p ${eStateDir}
   '';
   run = ''
+    nonExistantOrNixManaged () {
+      # check if it doesn't exist first
+      if [[ ! -f "$1" ]]; then
+        return 1;
+      fi
+
+      # since it does exist, make sure it's nix-managed
+      header=$(head -n 1 "$1")
+      if [[ "x$header" == "x#NIX-MANAGED" ]]; then
+        return 1;
+      else
+        return 0;
+      fi
+    }
+
     action=Initializing
     if test -d ${eStateDir}/${gameFolder}; then
       action=Updating
@@ -75,6 +92,15 @@ in
     '' else ''
     steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} validate +exit
     ''}
+
+    if nonExistantOrNixManaged ${gameFolder}/cfg/server.cfg; then
+      rm -f ${gameFolder}/cfg/server.cfg
+    else
+      echo "Moving the old server.cfg out of the way"
+      mv ${gameFolder}/cfg/server.cfg ${gameFolder}/cfg/server-old-$RANDOM.cfg
+    fi
+    echo "Writing server.cfg"
+    cp ${serverCfg} ${gameFolder}/cfg/server.cfg
 
     echo "Running ${gameName} (${gameStateName})"
     steam-run ./srcds_run -game ${gameFolder} -nohltv -port ${toString gamePort} -strictportbind ${sExtraArgs}
