@@ -13,11 +13,11 @@ let
     } ) )
   ];
 in buildFHSEnv {
-  name = "srcds-run";
+  name = "srcds-fhs-run";
 
-  runScript = writeShellScript "srcds-run" ''
+  runScript = writeShellScript "srcds-fhs-run" ''
     if [ $# -eq 0 ]; then
-      echo "Usage: srcds-run command-to-run args..." >&2
+      echo "Usage: srcds-fhs-run command-to-run args..." >&2
       exit 1
     fi
 

@@ -7,7 +7,7 @@ let
   #steamcfg = config.programs.steam;
   username = "srcds";
   gameInfo = import ./get-game-info.nix;
-  srcds-run = pkgs.callPackage ./srcds-run.nix {};
+  srcds-fhs-run = pkgs.callPackage ./srcds-fhs-run.nix {};
   getGameFolder = v: if v.gameFolder != "AUTOMATIC" then v.gameFolder else (gameInfo.get v.appId).folder;
   getGameName = v: let gi = gameInfo.get v.appId; in if gi == null then "Unknown SRCDS" else gi.game;
   mkScripts = import ./bootstrap-script.nix;
@@ -91,7 +91,7 @@ in
             User = username;
             Group = username;
           };
-          path = with pkgs; [ gnutar xz steamcmd srcds-run ];
+          path = with pkgs; [ gnutar xz steamcmd srcds-fhs-run ];
           script = ''
             # Ensure steamcmd is up to date
             steamcmd +exit
@@ -99,7 +99,7 @@ in
             # Ensure Steam runtime
             if [[ ! -d $HOME/.local/share/Steam/ubuntu12_32 ]]; then
               tar -C $HOME/.local/share/Steam -xvf ${pkgs.steam-unwrapped}/lib/steam/bootstraplinux_ubuntu12_32.tar.xz 
-              srcds-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/setup.sh
+              srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/setup.sh
             fi
           '';
         };
@@ -111,7 +111,7 @@ in
           gameFolder = getGameFolder v;
           windowsWorkaround = needsWorkaround v;
           scripts = mkScripts {
-            inherit pkgs lib gameFolder gameName windowsWorkaround;
+            inherit pkgs lib srcds-fhs-run gameFolder gameName windowsWorkaround;
             inherit (v) appId branch gamePort extraArgs startingMap rcon config extraConfig;
             user = username;
             group = username;
@@ -127,9 +127,9 @@ in
             wantedBy = [ "multi-user.target" ];
             requires = [ "srcds-setup.service" "srcds-game-${n}.socket" ];
             preStart = scripts.prepare;
-            script = scripts.run;
-            path = with pkgs; [ steamcmd srcds-run ];
+            path = with pkgs; [ steamcmd srcds-fhs-run ];
             serviceConfig = {
+              ExecStart = scripts.runCommand;
               StateDirectory = "srcds";
               StateDirectoryMode = "0775";
               User = username;

@@ -1,6 +1,7 @@
 { 
   pkgs,
   lib,
+  srcds-fhs-run,
 
   # Username of the runner
   user,
@@ -55,8 +56,7 @@ in
 {
   prepare = ''
     mkdir -p ${eStateDir}
-  '';
-  run = ''
+
     nonExistantOrNixManaged () {
       # check if it doesn't exist first
       if [[ ! -f "$1" ]]; then
@@ -101,11 +101,6 @@ in
     echo "Writing server.cfg"
     cp ${serverCfg} ${gameFolder}/cfg/server.cfg
     chmod 664 ${gameFolder}/cfg/server.cfg
-
-    SRCDS_BIN=./srcds_run
-    STEAMRT_RUN=$HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh
-
-    echo "Running ${gameName} (${gameStateName})"
-    srcds-run $STEAMRT_RUN -- $SRCDS_BIN -console -game ${gameFolder} -port ${toString gamePort} +ip 0.0.0.0 -nohltv -strictportbind ${sExtraArgs}
   '';
+  runCommand = "${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} -port ${toString gamePort} +ip 0.0.0.0 -nohltv -strictportbind ${sExtraArgs}";
 }
