@@ -149,6 +149,32 @@ signed integer
 
 
 
+## services\.srcds\.games\.\<name>\.branch
+
+
+
+Beta branch to download and update the server from\.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+` "public" `
+
+
+
+*Example:*
+` "prerelease" `
+
+*Declared by:*
+ - [/home/ihaveahax/Projects/srcds-nix/modules/srcds](file:///home/ihaveahax/Projects/srcds-nix/modules/srcds)
+
+
+
 ## services\.srcds\.games\.\<name>\.config
 
 
