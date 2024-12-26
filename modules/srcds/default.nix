@@ -127,9 +127,10 @@ in
             wantedBy = [ "multi-user.target" ];
             requires = [ "srcds-setup.service" "srcds-game-${n}.socket" ];
             preStart = scripts.prepare;
+            script = scripts.run;
             path = with pkgs; [ steamcmd srcds-fhs-run ];
             serviceConfig = {
-              ExecStart = scripts.runCommand;
+              WorkingDirectory = config.users.users.${username}.home;
               StateDirectory = "srcds";
               StateDirectoryMode = "0775";
               User = username;
