@@ -96,10 +96,13 @@ in
             # Ensure steamcmd is up to date
             steamcmd +exit
 
+            STEAMDIR=$HOME/.local/share/Steam
+
             # Ensure Steam runtime
-            if [[ ! -d $HOME/.local/share/Steam/ubuntu12_32 ]]; then
-              tar -C $HOME/.local/share/Steam -xvf ${pkgs.steam-unwrapped}/lib/steam/bootstraplinux_ubuntu12_32.tar.xz 
-              srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/setup.sh
+            if [[ ! -d $STEAMDIR/ubuntu12_32 ]]; then
+              cp ${pkgs.steam-unwrapped}/lib/steam/bootstraplinux_ubuntu12_32.tar.xz $STEAMDIR/bootstrap.tar.xz
+              tar -C $STEAMDIR -xvf $STEAMDIR
+              srcds-fhs-run $STEAMDIR/ubuntu12_32/steam-runtime/setup.sh
             fi
           '';
         };
