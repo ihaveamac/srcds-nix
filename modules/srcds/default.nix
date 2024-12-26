@@ -91,7 +91,7 @@ in
             User = username;
             Group = username;
           };
-          path = with pkgs; [ steamcmd srcds-run ];
+          path = with pkgs; [ gnutar xz steamcmd srcds-run ];
           script = ''
             # Ensure steamcmd is up to date
             steamcmd +exit
@@ -99,7 +99,7 @@ in
             # Ensure Steam runtime
             if [[ ! -d $HOME/.local/share/Steam/ubuntu12_32 ]]; then
               tar -C $HOME/.local/share/Steam -xvf ${pkgs.steam-unwrapped}/lib/steam/bootstraplinux_ubuntu12_32.tar.xz 
-              srcds-run $HOME/.local/share/Steam/ubuntu12_32/setup.sh
+              srcds-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/setup.sh
             fi
           '';
         };
@@ -122,10 +122,10 @@ in
           name = "srcds-game-${n}";
           value = {
             description = "Server runner for ${gameName} (${n})";
-            wants = [ "srcds-setup.service" "network-online.target" ];
+            wants = [ "network-online.target" ];
             after = [ "srcds-setup.service" "network-online.target" "srcds-game-${n}.socket" ];
             wantedBy = [ "multi-user.target" ];
-            requires = [ "srcds-game-${n}.socket" ];
+            requires = [ "srcds-setup.service" "srcds-game-${n}.socket" ];
             preStart = scripts.prepare;
             script = scripts.run;
             path = with pkgs; [ steamcmd srcds-run ];
