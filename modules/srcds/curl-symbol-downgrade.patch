@@ -1,0 +1,26 @@
+diff --git a/configure b/configure
+index dcad39e..4d0282a 100755
+--- a/configure
++++ b/configure
+@@ -30493,7 +30493,7 @@ fi
+ 
+ CURL_LIBCURL_VERSIONED_SYMBOLS_PREFIX="$versioned_symbols_flavour"
+ 
+-CURL_LIBCURL_VERSIONED_SYMBOLS_SONAME="4"
++CURL_LIBCURL_VERSIONED_SYMBOLS_SONAME="3"
+    if test "x$versioned_symbols" = 'xyes'; then
+   CURL_LT_SHLIB_USE_VERSIONED_SYMBOLS_TRUE=
+   CURL_LT_SHLIB_USE_VERSIONED_SYMBOLS_FALSE='#'
+diff --git a/configure.ac b/configure.ac
+index e3ecf00..b03fb47 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2700,7 +2700,7 @@ AS_HELP_STRING([--disable-versioned-symbols], [Disable versioned symbols in shar
+ )
+ 
+ AC_SUBST([CURL_LIBCURL_VERSIONED_SYMBOLS_PREFIX], ["$versioned_symbols_flavour"])
+-AC_SUBST([CURL_LIBCURL_VERSIONED_SYMBOLS_SONAME], ["4"])  dnl Keep in sync with VERSIONCHANGE - VERSIONDEL in lib/Makefile.soname
++AC_SUBST([CURL_LIBCURL_VERSIONED_SYMBOLS_SONAME], ["3"])  dnl Keep in sync with VERSIONCHANGE - VERSIONDEL in lib/Makefile.soname
+ AM_CONDITIONAL([CURL_LT_SHLIB_USE_VERSIONED_SYMBOLS],
+   [test "x$versioned_symbols" = 'xyes'])
+ 

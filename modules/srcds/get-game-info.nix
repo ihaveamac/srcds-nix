@@ -1,13 +1,13 @@
 rec {
   gameIds = {
-    "740" = { game = "Counter-Strike: Global Offensive"; folder = "csgo"; windowsWorkaround = true; };
+    "740" = { game = "Counter-Strike: Global Offensive"; folder = "csgo"; windowsWorkaround = false; };
     "232330" = { game = "Counter-Strike: Source"; folder = "cstrike"; windowsWorkaround = false; };
     "232290" = { game = "Day of Defeat: Source"; folder = "dod"; windowsWorkaround = false; };
     "4020" = { game = "Garry's Mod"; folder = "garrysmod"; windowsWorkaround = false; };
     "232370" = { game = "Half-Life 2: Deathmatch"; folder = "hl2mp"; windowsWorkaround = false; };
     "255470" = { game = "Half-Life Deathmatch: Source"; folder = "hl1mp"; windowsWorkaround = true; };
     "222860" = { game = "Left 4 Dead 2"; folder = "left4dead2"; windowsWorkaround = true; };
-    "222840" = { game = "Left 4 Dead"; folder = "left4dead"; windowsWorkaround = true; };
+    "222840" = { game = "Left 4 Dead"; folder = "left4dead"; windowsWorkaround = false; };
     "232250" = { game = "Team Fortress 2"; folder = "tf"; windowsWorkaround = false; };
     "244310" = { game = "Source SDK Base 2013"; folder = null; windowsWorkaround = false; };
   };

@@ -7,6 +7,7 @@ let
   #steamcfg = config.programs.steam;
   username = "srcds";
   gameInfo = import ./get-game-info.nix;
+  srcds-run = pkgs.callPackage ./srcds-run.nix {};
   getGameFolder = v: if v.gameFolder != "AUTOMATIC" then v.gameFolder else (gameInfo.get v.appId).folder;
   getGameName = v: let gi = gameInfo.get v.appId; in if gi == null then "Unknown SRCDS" else gi.game;
   mkScripts = import ./bootstrap-script.nix;
@@ -59,12 +60,15 @@ in
     );
 
     systemd.sockets = listToAttrs (
-      mapAttrsToList (n: v: {
-        name = "srcds-${n}";
+      mapAttrsToList (n: v: let
+        gameName = getGameName v;
+      in {
+        name = "srcds-game-${n}";
         value = {
-          partOf = [ "srcds-${n}.service" ];
+          description = "Standard input for ${gameName} (${n})";
+          partOf = [ "srcds-game-${n}.service" ];
           socketConfig = {
-            ListenFIFO = "%t/srcds-${n}.stdin";
+            ListenFIFO = "%t/srcds-game-${n}.stdin";
             SocketMode = "0660";
             SocketUser = username;
             SocketGroup = username;
@@ -75,42 +79,69 @@ in
       }) cfg.games
     );
 
-    systemd.services = listToAttrs (
-      mapAttrsToList (n: v: let
-        gameFolder = getGameFolder v;
-        gameName = getGameName v;
-        windowsWorkaround = needsWorkaround v;
-        scripts = mkScripts {
-          inherit pkgs lib gameFolder gameName windowsWorkaround;
-          inherit (v) appId branch gamePort extraArgs startingMap rcon config extraConfig;
-          user = username;
-          group = username;
-          gameStateName = n;
-          stateDir = "/var/lib/srcds/${n}";
-        };
-      in {
-        name = "srcds-${n}";
-        value = {
-          description = "Server runner for ${gameName} (${n})";
+    systemd.services = mkMerge [
+      {
+        srcds-setup = {
+          description = "Source Dedicated Server setup";
           wants = [ "network-online.target" ];
-          after = [ "network-online.target" "srcds-${n}.socket" ];
+          after = [ "network-online.target" ];
           wantedBy = [ "multi-user.target" ];
-          requires = [ "srcds-${n}.socket" ];
-          preStart = scripts.prepare;
-          script = scripts.run;
-          path = with pkgs; [ steamcmd steam-run ];
           serviceConfig = {
-            StateDirectory = "srcds";
-            StateDirectoryMode = "0775";
+            Type = "oneshot";
             User = username;
             Group = username;
-            UMask = "0002";
-            StandardInput = "socket";
-            StandardOutput = "journal";
-            StandardError = "journal";
           };
+          path = with pkgs; [ steamcmd srcds-run ];
+          script = ''
+            # Ensure steamcmd is up to date
+            steamcmd +exit
+
+            # Ensure Steam runtime
+            if [[ ! -d $HOME/.local/share/Steam/ubuntu12_32 ]]; then
+              tar -C $HOME/.local/share/Steam -xvf ${pkgs.steam-unwrapped}/lib/steam/bootstraplinux_ubuntu12_32.tar.xz 
+              srcds-run $HOME/.local/share/Steam/ubuntu12_32/setup.sh
+            fi
+          '';
         };
-      }) cfg.games
-    );
+      }
+      
+      (listToAttrs (
+        mapAttrsToList (n: v: let
+        gameName = getGameName v;
+          gameFolder = getGameFolder v;
+          windowsWorkaround = needsWorkaround v;
+          scripts = mkScripts {
+            inherit pkgs lib gameFolder gameName windowsWorkaround;
+            inherit (v) appId branch gamePort extraArgs startingMap rcon config extraConfig;
+            user = username;
+            group = username;
+            gameStateName = n;
+            stateDir = "/var/lib/srcds/${n}";
+          };
+        in {
+          name = "srcds-game-${n}";
+          value = {
+            description = "Server runner for ${gameName} (${n})";
+            wants = [ "srcds-setup.service" "network-online.target" ];
+            after = [ "srcds-setup.service" "network-online.target" "srcds-game-${n}.socket" ];
+            wantedBy = [ "multi-user.target" ];
+            requires = [ "srcds-game-${n}.socket" ];
+            preStart = scripts.prepare;
+            script = scripts.run;
+            path = with pkgs; [ steamcmd srcds-run ];
+            serviceConfig = {
+              StateDirectory = "srcds";
+              StateDirectoryMode = "0775";
+              User = username;
+              Group = username;
+              UMask = "0002";
+              StandardInput = "socket";
+              StandardOutput = "journal";
+              StandardError = "journal";
+            };
+          };
+        }) cfg.games
+      ))
+    ];
   };
 }
