@@ -1,4 +1,4 @@
-{ globalConfig  }:
+globalConfig:
 
 { config, lib, pkgs, ... }:
 
@@ -76,6 +76,20 @@ in
       '';
     };
 
+    sourceTV = {
+      # TODO: check that this can actually be used (not all source games support it!)
+      enable = mkOption {
+        description = "Enable SourceTV.";
+        type = types.bool;
+        default = false;
+      };
+
+      port = mkOption {
+        description = "SourceTV port to open. This is usually 27020 (game port + 5), but is deliberately left without a default value to avoid conflicts with multiple servers.";
+        type = types.port;
+      };
+    };
+
     rcon = {
       enable = mkOption {
         description = "Enable RCON.";
@@ -85,7 +99,7 @@ in
       password = mkOption {
         description = "Password to use for RCON.";
         type = types.str;
-        default = "nixos";
+        default = "";
       };
     };
 
@@ -98,12 +112,11 @@ in
   };
 
   config = mkIf true {
-    #test = mapAttrsToList (n: v: n) config;
     finalArgs = flatten (filter (v: v != null) ([
       "-port" (toString config.gamePort)
-      "-nohltv" # this will be an option some day
       "-strictportbind"
       "+ip 0.0.0.0" # maybe this should be an option?
+      (if config.sourceTV.enable then [ "+tv_enable" "1" "+tv_port" (toString config.sourceTV.port) ] else "-nohltv")
     ] ++ (optional (config.startingMap != null) [ "+map" config.startingMap ])
       ++ (optional (config.rcon.enable) "-usercon")
       ++ config.extraArgs));

@@ -26,7 +26,7 @@ in
     
     games = mkOption {
       description = "Game servers to run. Each attribute name will store server files in a different directory, allowing for multiple servers of the same game.";
-      type = types.attrsOf (types.submodule (import ./games.nix { globalConfig = config; }));
+      type = types.attrsOf (types.submodule (import ./games.nix config));
     };
   };
 
@@ -47,11 +47,12 @@ in
 
     environment.systemPackages = with pkgs; [ steamcmd ];
 
-    networking.firewall.allowedUDPPorts = filter (v: v != null) (
-      mapAttrsToList (n: v:
-        if v.openFirewall then v.gamePort else null
-      ) cfg.games
-    );
+    networking.firewall.allowedUDPPorts = flatten (filter (v: v != null) (
+      mapAttrsToList (n: v: [
+        (if v.openFirewall then v.gamePort else null)
+        (if v.openFirewall && v.sourceTV.enable then v.sourceTV.port else null)
+      ] ) cfg.games
+    ));
 
     networking.firewall.allowedTCPPorts = filter (v: v != null) (
       mapAttrsToList (n: v:
