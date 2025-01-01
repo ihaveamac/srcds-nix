@@ -3,7 +3,7 @@
 with lib;
 let
   globalcfg = config.services.srcds;
-  gameInfo = import ./get-game-info.nix;
+  gameInfo = import ./game-info.nix;
 in
 {
   options = {

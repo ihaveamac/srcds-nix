@@ -6,7 +6,7 @@ let
   # this breaks render-doc.nix
   #steamcfg = config.programs.steam;
   username = "srcds";
-  gameInfo = import ./get-game-info.nix;
+  gameInfo = import ./game-info.nix;
   srcds-fhs-run = pkgs.callPackage ./srcds-fhs-run.nix {};
   getGameFolder = v: if v.gameFolder != "AUTOMATIC" then v.gameFolder else (gameInfo.get v.appId).folder;
   getGameName = v: let gi = gameInfo.get v.appId; in if gi == null then "Unknown SRCDS" else gi.game;

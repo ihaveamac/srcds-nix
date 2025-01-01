@@ -2,7 +2,7 @@
 
 with builtins; with pkgs.lib;
 let
-  gameInfo = import ./modules/srcds/get-game-info.nix;
+  gameInfo = import ./modules/srcds/game-info.nix;
   renderedDoc = import ./render-doc.nix { inherit pkgs; };
   text = pkgs.writeText "README.md" ''
     # srcds-nix
@@ -17,7 +17,7 @@ let
 
     Manage and run Source Dedicated Server games on NixOS.
 
-    # Games
+    ## Games
 
     I am aware some games are missing here, I'll add them eventually. For now if you want a missing game, set `appId`, `allowUnknownId`, and `gameFolder`.
 
@@ -25,9 +25,9 @@ let
     | --- | --- | --- |
     ${concatStringsSep "\n" (mapAttrsToList (n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |") gameInfo.gameIds)}
 
-    # Install
+    ## Install
 
-    ## Flake
+    ### Flake
 
     Add this repo to your flake inputs:
     ```nix
@@ -43,7 +43,7 @@ let
     ];
     ```
 
-    # Example
+    ## Example
 
     This will set up a server for Counter-Strike: Source, enable RCON, and configure it. Server files will be stored at `/var/lib/srcds/my-css-server`.
 
@@ -69,14 +69,16 @@ let
     };
     ```
 
-    # Module options
+    ## Module options
+
+    Please see [the module options list](OPTIONS.md).
   '';
 in pkgs.mkShellNoCC {
   name = "srcds-nix-readme-builder";
   shellHook = ''
     set -x
     cp ${text} README.md
-    cat ${renderedDoc.optionsCommonMark} >> README.md
+    cat ${renderedDoc.optionsCommonMark} >> OPTIONS.md
     set +x
     exit
   '';
