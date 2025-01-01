@@ -26,7 +26,7 @@ in
     
     games = mkOption {
       description = "Game servers to run. Each attribute name will store server files in a different directory, allowing for multiple servers of the same game.";
-      type = types.attrsOf (types.submodule (import ./games.nix { inherit config lib pkgs; }));
+      type = types.attrsOf (types.submodule (import ./games.nix { globalConfig = config; }));
     };
   };
 
@@ -115,7 +115,7 @@ in
           windowsWorkaround = needsWorkaround v;
           scripts = mkScripts {
             inherit pkgs lib srcds-fhs-run gameFolder gameName windowsWorkaround;
-            inherit (v) appId branch gamePort extraArgs startingMap rcon config extraConfig;
+            inherit (v) appId branch finalArgs serverConfig extraServerConfig rcon;
             user = username;
             group = username;
             gameStateName = n;

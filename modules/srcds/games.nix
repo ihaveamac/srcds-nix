@@ -1,8 +1,10 @@
+{ globalConfig  }:
+
 { config, lib, pkgs, ... }:
 
 with lib;
 let
-  globalcfg = config.services.srcds;
+  cfg = globalConfig.services.srcds;
   gameInfo = import ./game-info.nix;
 in
 {
@@ -35,7 +37,7 @@ in
     openFirewall = mkOption {
       description = "Whether to open firewall ports for this server.";
       type = types.bool;
-      default = globalcfg.openFirewall;
+      default = cfg.openFirewall;
       defaultText = literalExpression "config.services.srcds.openFirewall";
     };
 
@@ -58,13 +60,13 @@ in
       example = "pl_upward";
     };
 
-    config = mkOption {
+    serverConfig = mkOption {
       description = "Configuration to put in `<gamedir>/cfg/server.cfg`. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting. To store local configuration not managed by NixOS, put commands in `<gamedir>/cfg/server_local.cfg`.";
-      type = with types; attrsOf (oneOf [ str int ]);
+      type = with types; attrsOf (oneOf [ str int float ]);
       default = { hostname = "My NixOS TF2 server"; sv_pure = 0; sv_contact = "you@example.com"; };
     };
 
-    extraConfig = mkOption {
+    extraServerConfig = mkOption {
       description = "Additional configuration to put at the end of `<gamedir>/cfg/server.cfg`.";
       type = types.str;
       default = "";
@@ -86,5 +88,24 @@ in
         default = "nixos";
       };
     };
+
+    finalArgs = mkOption {
+      description = "Final set of command line args that are passed to `srcds_run`.";
+      visible = false;
+      type = types.listOf (types.nullOr types.str);
+      readOnly = true;
+    };
+  };
+
+  config = mkIf true {
+    #test = mapAttrsToList (n: v: n) config;
+    finalArgs = flatten (filter (v: v != null) ([
+      "-port" (toString config.gamePort)
+      "-nohltv" # this will be an option some day
+      "-strictportbind"
+      "+ip 0.0.0.0" # maybe this should be an option?
+    ] ++ (optional (config.startingMap != null) [ "+map" config.startingMap ])
+      ++ (optional (config.rcon.enable) "-usercon")
+      ++ config.extraArgs));
   };
 }

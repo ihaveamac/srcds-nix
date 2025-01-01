@@ -1,15 +1,15 @@
-{ pkgs, gameStateName, config, extraConfig, rcon }:
+{ pkgs, gameStateName, serverConfig, extraServerConfig, rcon }:
 
 with pkgs;
 let
-  sConfig = lib.concatStringsSep "\n" (
+  sServerConfig = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (n: v: let
       vType = builtins.typeOf v;
       args = if vType == "str" then v
         else if vType == "int" then toString v
         else if vType == "float" then toString v
         else throw "Unexpected type ${vType} given to services.srcds.games.${gameStateName}.config.${n}";
-    in "${n} ${v}") config
+    in "${n} ${toString v}") serverConfig
   );
 in
 writeText "server.cfg" ''
@@ -33,10 +33,10 @@ rcon_password ${if rcon.password == "nixos" then
 ''}
 
 // services.srcds.games.${gameStateName}.config
-${sConfig}
+${sServerConfig}
 
 // services.srcds.games.${gameStateName}.extraConfig
-${extraConfig}
+${extraServerConfig}
 
 // Execute local commands.
 exec server_local.cfg

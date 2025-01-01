@@ -13,8 +13,8 @@
       enable = true;
       password = "ihaveahax";
     };
-    config.hostname = "test";
-    extraConfig = ''
+    serverConfig.hostname = "test";
+    extraServerConfig = ''
       echo test
     '';
   };

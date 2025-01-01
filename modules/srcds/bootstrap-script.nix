@@ -21,24 +21,20 @@
   branch,
   # Requires workaround to download
   windowsWorkaround,
-  # Game port
-  gamePort,
-  # Extra ConVar arguments
-  extraArgs,
-  # Starting map
-  startingMap,
-  # RCON settings
-  rcon,
+  # Command line arguments
+  finalArgs,
   # Config for server.cfg
-  config,
+  serverConfig,
   # Extra config for server.cfg
-  extraConfig
+  extraServerConfig,
+  # Rcon
+  rcon
 }:
 
 with lib;
 let
   configBuilder = import ./config-builder.nix;
-  serverCfg = configBuilder { inherit pkgs gameStateName config extraConfig rcon; };
+  serverCfg = configBuilder { inherit pkgs gameStateName serverConfig extraServerConfig rcon; };
   eStateDir = escapeShellArg stateDir;
   sAppId = toString appId;
   #sExtraArgs = lib.concatStringsSep " " (
@@ -47,11 +43,7 @@ let
   #  ) ((lib.optionalAttrs (startingMap != null) { map = startingMap; }) //
   #    extraCommandArgs) # this is put at the end to allow for manual overrides
   #);
-  sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) (
-    filter (v: v != null) (lists.flatten ( []
-      ++ (optional (startingMap != null) [ "+map" startingMap ])
-      ++ (optional (rcon.enable) "-usercon")
-      ++ extraArgs))));
+  sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) finalArgs);
 in
 {
   prepare = ''
@@ -73,24 +65,25 @@ in
       fi
     }
 
+    cd ${eStateDir};
+
     action=Initializing
-    if test -d ${eStateDir}/${gameFolder}; then
+    if test -d ${gameFolder}; then
       action=Updating
     fi
-    cd ${eStateDir};
     echo "$action ${gameName} (${gameStateName})"
 
     ${if windowsWorkaround then ''
     if test -f srcds_linux; then
-      steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+      steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
     else
       # the server for ${gameName} requires a workaround to download for Linux
       # (or we don't know if it does, in which case, we will do it anyway)
-      steamcmd +force_install_dir ${eStateDir} +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} validate +exit
-      steamcmd +force_install_dir ${eStateDir} +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} validate +exit
+      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} validate +exit
+      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} validate +exit
     fi
     '' else ''
-    steamcmd +force_install_dir ${eStateDir} +login anonymous +app_update ${sAppId} validate +exit
+    steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} validate +exit
     ''}
 
     if nonExistantOrNixManaged ${gameFolder}/cfg/server.cfg; then
@@ -103,6 +96,6 @@ in
     cp ${serverCfg} ${gameFolder}/cfg/server.cfg
     chmod 664 ${gameFolder}/cfg/server.cfg
 
-    exec ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} -port ${toString gamePort} +ip 0.0.0.0 -nohltv -strictportbind ${sExtraArgs}
+    exec ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} ${sExtraArgs}
   '';
 }
