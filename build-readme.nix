@@ -78,7 +78,7 @@ in pkgs.mkShellNoCC {
   shellHook = ''
     set -x
     cp ${text} README.md
-    cat ${renderedDoc.optionsCommonMark} >> OPTIONS.md
+    cat ${renderedDoc.optionsCommonMark} > OPTIONS.md
     set +x
     exit
   '';
