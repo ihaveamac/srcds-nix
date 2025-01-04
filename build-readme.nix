@@ -13,13 +13,13 @@ let
     -->
 
     > [!WARNING]
-    > WORK IN PROGRESS - Probably not functional, definitely not stable. If you use this then you should recognize that options could change in totally breaking ways up until I decide that it's stable.
+    > WORK IN PROGRESS - The module does not have a stable interface. If you use this then you should recognize that options could change in totally breaking ways up until I decide that it's stable.
 
     Manage and run Source Dedicated Server games on NixOS.
 
-    ## Games
+    Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garrys-mod), this module does not attempt to download and store the dedicated server software as a Nix derivation. Instead, it generates systemd units that download the software with steamcmd at launch, then applies configurations to files like `server.cfg`. The upsides mean this the module can easily support more games, and automatically use the latest updates, but the downside is the server is a little less reproducible.
 
-    I am aware some games are missing here, I'll add them eventually. For now if you want a missing game, set `appId`, `allowUnknownId`, and `gameFolder`.
+    ## Games
 
     | Game | AppID | Game Folder |
     | --- | --- | --- |
