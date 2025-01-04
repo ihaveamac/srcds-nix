@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [ ./modules/srcds ];
+  imports = [ ./modules/srcds/default.nix ];
 
   services.srcds.enable = true;
   services.srcds.openFirewall = true;
@@ -9,6 +9,21 @@
     appId = 232330;
     gamePort = 27015;
     startingMap = "cs_office";
+    autoUpdate = true;
+    rcon = {
+      enable = true;
+      password = "ihaveahax";
+    };
+    serverConfig.hostname = "test";
+    extraServerConfig = ''
+      echo test
+    '';
+  };
+  services.srcds.games.cstrike2 = {
+    appId = 232330;
+    gamePort = 27016;
+    startingMap = "cs_office";
+    autoUpdate = false;
     rcon = {
       enable = true;
       password = "ihaveahax";

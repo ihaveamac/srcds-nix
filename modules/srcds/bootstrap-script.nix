@@ -19,6 +19,8 @@
   appId,
   # Branch
   branch,
+  # Auto update
+  autoUpdate,
   # Requires workaround to download
   windowsWorkaround,
   # Command line arguments
@@ -75,16 +77,26 @@ in
 
     ${if windowsWorkaround then ''
     if test -f srcds_linux; then
+      ${if autoUpdate then ''
       steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+      '' else ''
+      echo "Not updating since autoUpdate was disabled"
+      ''}
     else
       # the server for ${gameName} requires a workaround to download for Linux
       # (or we don't know if it does, in which case, we will do it anyway)
-      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} validate +exit
-      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} validate +exit
+      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
     fi
+    '' else (if autoUpdate then ''
+    steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
     '' else ''
-    steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} validate +exit
-    ''}
+    if test -f srcds_linux; then
+      echo "Not updating since autoUpdate was disabled"
+    else
+      steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+    fi
+    '')}
 
     if nonExistantOrNixManaged ${gameFolder}/cfg/server.cfg; then
       rm -f ${gameFolder}/cfg/server.cfg

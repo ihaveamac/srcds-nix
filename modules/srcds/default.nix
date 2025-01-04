@@ -47,8 +47,8 @@ in
 
     environment.systemPackages = with pkgs; [ steamcmd ];
 
-    networking.firewall.allowedUDPPorts = flatten (filter (v: v != null) (
-      mapAttrsToList (n: v: [
+    networking.firewall.allowedUDPPorts = filter (v: (lib.warn "test: ${toString v}" v) != null) (
+      flatten (mapAttrsToList (n: v: [
         (if v.openFirewall then v.gamePort else null)
         (if v.openFirewall && v.sourceTV.enable then v.sourceTV.port else null)
       ] ) cfg.games
@@ -116,7 +116,7 @@ in
           windowsWorkaround = needsWorkaround v;
           scripts = mkScripts {
             inherit pkgs lib srcds-fhs-run gameFolder gameName windowsWorkaround;
-            inherit (v) appId branch finalArgs serverConfig extraServerConfig rcon;
+            inherit (v) appId branch finalArgs autoUpdate serverConfig extraServerConfig rcon;
             user = username;
             group = username;
             gameStateName = n;

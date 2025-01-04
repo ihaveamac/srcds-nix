@@ -41,6 +41,12 @@ in
       defaultText = literalExpression "config.services.srcds.openFirewall";
     };
 
+    autoUpdate = mkOption {
+      description = "Automatically check for and install updates. This should be disabled if using mods that patch game files. The initial installation will still be performed regardless of this setting.";
+      type = bool;
+      default = true;
+    };
+
     gamePort = mkOption {
       description = "Game port to open. This is normally 27015, but is deliberately left without a default value to avoid conflicts with multiple servers.";
       type = port;
