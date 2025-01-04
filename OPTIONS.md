@@ -101,34 +101,6 @@ string
 
 
 
-## services\.srcds\.games\.\<name>\.config
-
-
-
-Configuration to put in ` <gamedir>/cfg/server.cfg `\. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting\. To store local configuration not managed by NixOS, put commands in ` <gamedir>/cfg/server_local.cfg `\.
-
-
-
-*Type:*
-attribute set of (string or signed integer)
-
-
-
-*Default:*
-
-```
-{
-  hostname = "My NixOS TF2 server";
-  sv_contact = "you@example.com";
-  sv_pure = 0;
-}
-```
-
-*Declared by:*
- - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
-
-
-
 ## services\.srcds\.games\.\<name>\.extraArgs
 
 
@@ -163,7 +135,7 @@ list of string
 
 
 
-## services\.srcds\.games\.\<name>\.extraConfig
+## services\.srcds\.games\.\<name>\.extraServerConfig
 
 
 
@@ -237,6 +209,27 @@ Game port to open\. This is normally 27015, but is deliberately left without a d
 
 
 
+## services\.srcds\.games\.\<name>\.insecure
+
+
+
+Disable Valve Anti-Cheat\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` true `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
 ## services\.srcds\.games\.\<name>\.openFirewall
 
 
@@ -285,6 +278,8 @@ boolean
 
 Password to use for RCON\.
 
+If you would rather not expose it in your NixOS configuration, put it in a ` server_local.cfg ` file in ` <gameFolder>/cfg `\.
+
 
 
 *Type:*
@@ -293,7 +288,72 @@ string
 
 
 *Default:*
-` "nixos" `
+` "" `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.serverConfig
+
+
+
+Configuration to put in ` <gamedir>/cfg/server.cfg `\. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting\. To store local configuration not managed by NixOS, put commands in ` <gamedir>/cfg/server_local.cfg `\.
+
+
+
+*Type:*
+attribute set of (string or signed integer or floating point number)
+
+
+
+*Default:*
+
+```
+{
+  hostname = "My NixOS TF2 server";
+  sv_contact = "you@example.com";
+  sv_pure = 0;
+}
+```
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.sourceTV\.enable
+
+
+
+Enable SourceTV\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` false `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.sourceTV\.port
+
+
+
+SourceTV port to open\. This is usually 27020 (game port + 5), but is deliberately left without a default value to avoid conflicts with multiple servers\.
+
+
+
+*Type:*
+16 bit unsigned integer; between 0 and 65535 (both inclusive)
 
 *Declared by:*
  - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
