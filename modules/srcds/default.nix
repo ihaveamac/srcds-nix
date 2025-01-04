@@ -3,8 +3,7 @@
 with lib;
 let
   cfg = config.services.srcds;
-  # this breaks render-doc.nix
-  #steamcfg = config.programs.steam;
+  steamcfg = config.programs.steam;
   username = "srcds";
   gameInfo = import ./game-info.nix;
   srcds-fhs-run = pkgs.callPackage ./srcds-fhs-run.nix {};
@@ -20,8 +19,8 @@ in
     openFirewall = mkOption {
       description = "Whether to open firewall ports for all defined servers. This can be overridden per-server by setting each one's `openFirewall` option.";
       type = types.bool;
-      #default = steamcfg.dedicatedServer.openFirewall;
-      default = false;
+      default = steamcfg.dedicatedServer.openFirewall;
+      defaultText = literalExpression "config.programs.steam.dedicatedServer.openFirewall";
     };
     
     games = mkOption {

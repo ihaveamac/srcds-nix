@@ -2,12 +2,13 @@
 
 with pkgs;
 let
-  #eval = pkgs.lib.evalModules {
-  #  modules = [ ./modules/srcds.nix ];
-  #};
   eval = lib.evalModules {
     specialArgs = {inherit pkgs;};
-    modules = [ ./modules/srcds/default.nix (_: {_module.check = false;}) ];
+    modules = [
+      ./modules/srcds/default.nix
+      (_: {_module.check = false;})
+      ./support/fake-steam.nix
+    ];
   };
 
   cleanEval = lib.filterAttrsRecursive (n: v: n != "_module") eval;

@@ -75,6 +75,27 @@ signed integer
 
 
 
+## services\.srcds\.games\.\<name>\.autoUpdate
+
+
+
+Automatically check for and install updates\. This should be disabled if using mods that patch game files\. The initial installation will still be performed regardless of this setting\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` true `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
 ## services\.srcds\.games\.\<name>\.branch
 
 
@@ -400,7 +421,7 @@ boolean
 
 
 *Default:*
-` false `
+` config.programs.steam.dedicatedServer.openFirewall `
 
 *Declared by:*
  - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
