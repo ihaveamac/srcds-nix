@@ -6,6 +6,7 @@ with lib;
 let
   cfg = globalConfig.services.srcds;
   gameInfo = import ./game-info.nix;
+  boolToNum = b: if b then "1" else "0";
 in
 {
   options = with types; {
@@ -69,7 +70,7 @@ in
     insecure = mkOption {
       description = "Disable Valve Anti-Cheat.";
       type = bool;
-      default = true;
+      default = false;
     };
 
     serverConfig = mkOption {
@@ -115,6 +116,26 @@ in
       };
     };
 
+    log = {
+      enable = mkOption {
+        description = "Enable logging. Sets `+log on`.";
+        type = bool;
+        default = true;
+      };
+
+      logToFile = mkOption {
+        description = "Log to a file in the `<gameFolder>/logs` folder. Sets `+sv_logfile 1`.";
+        type = bool;
+        default = true;
+      };
+
+      compressOnExit = mkOption {
+        description = "Compress log files on exit. Sets `+sv_logfilecompress 1`.";
+        type = bool;
+        default = true;
+      };
+    };
+
     finalArgs = mkOption {
       description = "Final set of command line args that are passed to `srcds_run`.";
       visible = false;
@@ -124,9 +145,15 @@ in
   };
 
   config = mkIf true {
+    # pidfile is handlded separately in bootstrap-script.nix
     finalArgs = flatten (filter (v: v != null) ([
       "-port" (toString config.gamePort)
       "-strictportbind"
+      (if config.log.enable then [
+        "+log" "1"
+        "+sv_logfile" (boolToNum config.log.logToFile)
+        "+sv_logfilecompress" (boolToNum config.log.compressOnExit)
+      ] else [ "+log 0" ])
       "+ip 0.0.0.0" # maybe this should be an option?
       (if config.sourceTV.enable then [ "+tv_enable" "1" "+tv_port" (toString config.sourceTV.port) ] else "-nohltv")
     ] ++ (optional (config.startingMap != null) [ "+map" config.startingMap ])

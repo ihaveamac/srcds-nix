@@ -15,6 +15,8 @@
   gameFolder,
   # State directory to store server files in (like /var/lib/srcds/gamename)
   stateDir,
+  # Standard input socket
+  stdinSocket,
   # Steam AppID
   appId,
   # Branch
@@ -46,10 +48,13 @@ let
   #    extraCommandArgs) # this is put at the end to allow for manual overrides
   #);
   sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) finalArgs);
+  pidFile = "${gameFolder}/srcds.pid";
+  absPidFile = "${stateDir}/${pidFile}";
 in
 {
   prepare = ''
     mkdir -p ${eStateDir}
+    rm -f ${absPidFile}
   '';
   run = ''
     nonExistantOrNixManaged () {
@@ -108,6 +113,19 @@ in
     cp ${serverCfg} ${gameFolder}/cfg/server.cfg
     chmod 664 ${gameFolder}/cfg/server.cfg
 
-    exec ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} ${sExtraArgs}
+    whoami
+
+    ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} -pidfile srcds.pid ${sExtraArgs} < /dev/stdin
+  '';
+  stop = ''
+    if test -f ${absPidFile}; then
+      echo "Sending exit command to ${gameName} (${gameStateName})"
+      whoami
+      echo "exit" > ${stdinSocket}
+      echo "Waiting for exit"
+      timeout 5 inotifywait -e delete_self ${absPidFile}
+    else
+      echo "No pidfile, not sending a command."
+    fi
   '';
 }

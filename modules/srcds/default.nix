@@ -66,7 +66,7 @@ in
         name = "srcds-game-${n}";
         value = {
           description = "Standard input for ${gameName} (${n})";
-          partOf = [ "srcds-game-${n}.service" ];
+          bindsTo = [ "srcds-game-${n}.service" ];
           socketConfig = {
             ListenFIFO = "%t/srcds-game-${n}.stdin";
             SocketMode = "0660";
@@ -120,6 +120,7 @@ in
             group = username;
             gameStateName = n;
             stateDir = "/var/lib/srcds/${n}";
+            stdinSocket = "/run/srcds-game-${n}.socket";
           };
         in {
           name = "srcds-game-${n}";
@@ -131,7 +132,8 @@ in
             requires = [ "srcds-setup.service" "srcds-game-${n}.socket" ];
             preStart = scripts.prepare;
             script = scripts.run;
-            path = with pkgs; [ steamcmd srcds-fhs-run ];
+            preStop = scripts.stop;
+            path = with pkgs; [ inotify-tools steamcmd srcds-fhs-run ];
             serviceConfig = {
               WorkingDirectory = config.users.users.${username}.home;
               StateDirectory = "srcds";
