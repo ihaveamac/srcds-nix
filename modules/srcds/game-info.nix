@@ -9,6 +9,7 @@ rec {
     "222860" = { game = "Left 4 Dead 2"; folder = "left4dead2"; windowsWorkaround = true; sourceTV = false; };
     "222840" = { game = "Left 4 Dead"; folder = "left4dead"; windowsWorkaround = false; sourceTV = false; };
     "232250" = { game = "Team Fortress 2"; folder = "tf"; windowsWorkaround = false; sourceTV = true; };
+    "346680" = { game = "Black Mesa"; folder = "bms"; windowsWorkaround = false; sourceTV = true; };
     "244310" = { game = "Source SDK Base 2013"; folder = null; windowsWorkaround = false; sourceTV = true; };
   };
   blockedGameIds = {

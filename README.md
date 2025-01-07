@@ -24,6 +24,7 @@ Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garry
 | Half-Life 2: Deathmatch | 232370 | hl2mp |
 | Source SDK Base 2013 | 244310 | (undefined) |
 | Half-Life Deathmatch: Source | 255470 | hl1mp |
+| Black Mesa | 346680 | bms |
 | Garry's Mod | 4020 | garrysmod |
 | Counter-Strike: Global Offensive | 740 | csgo |
 

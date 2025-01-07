@@ -244,6 +244,69 @@ boolean
 
 
 *Default:*
+` false `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.log\.enable
+
+
+
+Enable logging\. Sets ` +log on `\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` true `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.log\.compressOnExit
+
+
+
+Compress log files on exit\. Sets ` +sv_logfilecompress 1 `\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+` true `
+
+*Declared by:*
+ - [modules/srcds/default\.nix](https://github.com/ihaveamac/srcds-nix/blob/main/modules/srcds/default.nix)
+
+
+
+## services\.srcds\.games\.\<name>\.log\.logToFile
+
+
+
+Log to a file in the ` <gameFolder>/logs ` folder\. Sets ` +sv_logfile 1 `\.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
 ` true `
 
 *Declared by:*
