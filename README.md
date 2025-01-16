@@ -34,7 +34,7 @@ Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garry
 
 Add this repo to your flake inputs:
 ```nix
-srcds-nix.url = "github:ihaveamac/srcds.nix";
+srcds-nix.url = "github:ihaveamac/srcds-nix";
 ```
 
 Add `srcds-nix` to the `outputs` arguments.
