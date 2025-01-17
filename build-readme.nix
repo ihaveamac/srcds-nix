@@ -1,6 +1,9 @@
-{ pkgs ? import <nixpkgs> {} }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
-with builtins; with pkgs.lib;
+with builtins;
+with pkgs.lib;
 let
   gameInfo = import ./modules/srcds/game-info.nix;
   renderedDoc = import ./render-doc.nix { inherit pkgs; };
@@ -23,7 +26,11 @@ let
 
     | Game | AppID | Game Folder |
     | --- | --- | --- |
-    ${concatStringsSep "\n" (mapAttrsToList (n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |") gameInfo.gameIds)}
+    ${concatStringsSep "\n" (
+      mapAttrsToList (
+        n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |"
+      ) gameInfo.gameIds
+    )}
 
     ## Install
 
@@ -73,7 +80,8 @@ let
 
     Please see [the module options list](OPTIONS.md).
   '';
-in pkgs.mkShellNoCC {
+in
+pkgs.mkShellNoCC {
   name = "srcds-nix-readme-builder";
   shellHook = ''
     set -x

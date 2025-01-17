@@ -1,4 +1,4 @@
-{ 
+{
   pkgs,
   lib,
   srcds-fhs-run,
@@ -32,13 +32,21 @@
   # Extra config for server.cfg
   extraServerConfig,
   # Rcon
-  rcon
+  rcon,
 }:
 
 with lib;
 let
   configBuilder = import ./config-builder.nix;
-  serverCfg = configBuilder { inherit pkgs gameStateName serverConfig extraServerConfig rcon; };
+  serverCfg = configBuilder {
+    inherit
+      pkgs
+      gameStateName
+      serverConfig
+      extraServerConfig
+      rcon
+      ;
+  };
   eStateDir = escapeShellArg stateDir;
   sAppId = toString appId;
   #sExtraArgs = lib.concatStringsSep " " (
@@ -80,28 +88,43 @@ in
     fi
     echo "$action ${gameName} (${gameStateName})"
 
-    ${if windowsWorkaround then ''
-    if test -f srcds_linux; then
-      ${if autoUpdate then ''
-      steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
-      '' else ''
-      echo "Not updating since autoUpdate was disabled"
-      ''}
-    else
-      # the server for ${gameName} requires a workaround to download for Linux
-      # (or we don't know if it does, in which case, we will do it anyway)
-      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
-      steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
-    fi
-    '' else (if autoUpdate then ''
-    steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
-    '' else ''
-    if test -f srcds_linux; then
-      echo "Not updating since autoUpdate was disabled"
-    else
-      steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
-    fi
-    '')}
+    ${
+      if windowsWorkaround then
+        ''
+          if test -f srcds_linux; then
+            ${
+              if autoUpdate then
+                ''
+                  steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+                ''
+              else
+                ''
+                  echo "Not updating since autoUpdate was disabled"
+                ''
+            }
+          else
+            # the server for ${gameName} requires a workaround to download for Linux
+            # (or we don't know if it does, in which case, we will do it anyway)
+            steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType windows +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+            steamcmd +force_install_dir $PWD +@sSteamCmdForcePlatformType linux +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+          fi
+        ''
+      else
+        (
+          if autoUpdate then
+            ''
+              steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+            ''
+          else
+            ''
+              if test -f srcds_linux; then
+                echo "Not updating since autoUpdate was disabled"
+              else
+                steamcmd +force_install_dir $PWD +login anonymous +app_update ${sAppId} -beta ${branch} validate +exit
+              fi
+            ''
+        )
+    }
 
     if nonExistantOrNixManaged ${gameFolder}/cfg/server.cfg; then
       rm -f ${gameFolder}/cfg/server.cfg

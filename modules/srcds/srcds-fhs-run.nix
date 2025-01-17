@@ -5,14 +5,18 @@
 
 # this uses a patched curl that I think only TF2 needs
 let
-  allPkgs = pkgs: with pkgs; [
-    glibc
-    #ncurses5
-    ( curlWithGnuTls.overrideAttrs (final: prev: {
-      patches = (if prev ? patches then prev.patches else []) ++ [ ./curl-symbol-downgrade.patch ];
-    } ) )
-  ];
-in buildFHSEnv {
+  allPkgs =
+    pkgs: with pkgs; [
+      glibc
+      #ncurses5
+      (curlWithGnuTls.overrideAttrs (
+        final: prev: {
+          patches = (if prev ? patches then prev.patches else [ ]) ++ [ ./curl-symbol-downgrade.patch ];
+        }
+      ))
+    ];
+in
+buildFHSEnv {
   name = "srcds-fhs-run";
 
   runScript = writeShellScript "srcds-fhs-run" ''

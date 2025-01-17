@@ -1,6 +1,11 @@
 globalConfig:
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 let
@@ -56,8 +61,13 @@ in
     extraArgs = mkOption {
       description = "Additional arguments to pass to `srcds_run`.";
       type = listOf str;
-      default = [];
-      example = [ "-timeout" "0" "-nobots" "+randommap" ];
+      default = [ ];
+      example = [
+        "-timeout"
+        "0"
+        "-nobots"
+        "+randommap"
+      ];
     };
 
     startingMap = mkOption {
@@ -75,8 +85,16 @@ in
 
     serverConfig = mkOption {
       description = "Configuration to put in `<gamedir>/cfg/server.cfg`. If this file already exists and is not managed by NixOS, it will be renamed to avoid overwriting. To store local configuration not managed by NixOS, put commands in `<gamedir>/cfg/server_local.cfg`.";
-      type = attrsOf (oneOf [ str int float ]);
-      default = { hostname = "My NixOS TF2 server"; sv_pure = 0; sv_contact = "you@example.com"; };
+      type = attrsOf (oneOf [
+        str
+        int
+        float
+      ]);
+      default = {
+        hostname = "My NixOS TF2 server";
+        sv_pure = 0;
+        sv_contact = "you@example.com";
+      };
     };
 
     extraServerConfig = mkOption {
@@ -146,19 +164,46 @@ in
 
   config = mkIf true {
     # pidfile is handlded separately in bootstrap-script.nix
-    finalArgs = flatten (filter (v: v != null) ([
-      "-port" (toString config.gamePort)
-      "-strictportbind"
-      (if config.log.enable then [
-        "+log" "1"
-        "+sv_logfile" (boolToNum config.log.logToFile)
-        "+sv_logfilecompress" (boolToNum config.log.compressOnExit)
-      ] else [ "+log 0" ])
-      "+ip 0.0.0.0" # maybe this should be an option?
-      (if config.sourceTV.enable then [ "+tv_enable" "1" "+tv_port" (toString config.sourceTV.port) ] else "-nohltv")
-    ] ++ (optional (config.startingMap != null) [ "+map" config.startingMap ])
-      ++ (optional (config.rcon.enable) "-usercon")
-      ++ (optional (config.insecure) "-insecure")
-      ++ config.extraArgs));
+    finalArgs = flatten (
+      filter (v: v != null) (
+        [
+          "-port"
+          (toString config.gamePort)
+          "-strictportbind"
+          (
+            if config.log.enable then
+              [
+                "+log"
+                "1"
+                "+sv_logfile"
+                (boolToNum config.log.logToFile)
+                "+sv_logfilecompress"
+                (boolToNum config.log.compressOnExit)
+              ]
+            else
+              [ "+log 0" ]
+          )
+          "+ip 0.0.0.0" # maybe this should be an option?
+          (
+            if config.sourceTV.enable then
+              [
+                "+tv_enable"
+                "1"
+                "+tv_port"
+                (toString config.sourceTV.port)
+              ]
+            else
+              "-nohltv"
+          )
+        ]
+        ++ (optional (config.startingMap != null) [
+          "+map"
+          config.startingMap
+        ])
+        ++ (optional (config.rcon.enable) "-usercon")
+        ++ (optional (config.insecure) "-insecure")
+        ++ config.extraArgs
+      )
+    );
   };
 }
