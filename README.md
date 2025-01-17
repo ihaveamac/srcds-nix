@@ -14,6 +14,9 @@ Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garry
 
 ## Games
 
+> [!WARNING]
+> Source 2 games don't work yet. Don't try to run Counter-Strike 2 with this module until it's finished.
+
 | Game | AppID | Game Folder |
 | --- | --- | --- |
 | Left 4 Dead | 222840 | left4dead |
@@ -26,6 +29,7 @@ Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garry
 | Half-Life Deathmatch: Source | 255470 | hl1mp |
 | Black Mesa | 346680 | bms |
 | Garry's Mod | 4020 | garrysmod |
+| Counter-Strike 2 | 730 | game/csgo |
 | Counter-Strike: Global Offensive | 740 | csgo |
 
 ## Install
@@ -34,7 +38,7 @@ Unlike other projects like [nix-garrys-mod](https://github.com/TGRCdev/nix-garry
 
 Add this repo to your flake inputs:
 ```nix
-srcds-nix.url = "github:ihaveamac/srcds-nix";
+srcds-nix.url = "github:ihaveamac/srcds.nix";
 ```
 
 Add `srcds-nix` to the `outputs` arguments.

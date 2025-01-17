@@ -5,72 +5,115 @@ rec {
       folder = "csgo";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "232330" = {
       game = "Counter-Strike: Source";
       folder = "cstrike";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "232290" = {
       game = "Day of Defeat: Source";
       folder = "dod";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "4020" = {
       game = "Garry's Mod";
       folder = "garrysmod";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "232370" = {
       game = "Half-Life 2: Deathmatch";
       folder = "hl2mp";
       windowsWorkaround = false;
       sourceTV = false;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "255470" = {
       game = "Half-Life Deathmatch: Source";
       folder = "hl1mp";
       windowsWorkaround = true;
       sourceTV = false;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "222860" = {
       game = "Left 4 Dead 2";
       folder = "left4dead2";
       windowsWorkaround = true;
       sourceTV = false;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "222840" = {
       game = "Left 4 Dead";
       folder = "left4dead";
       windowsWorkaround = false;
       sourceTV = false;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "232250" = {
       game = "Team Fortress 2";
       folder = "tf";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "346680" = {
       game = "Black Mesa";
       folder = "bms";
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
     };
     "244310" = {
       game = "Source SDK Base 2013";
       folder = null;
       windowsWorkaround = false;
       sourceTV = true;
+      engine = "source1";
+      executable = "srcds_run";
+      forcedArguments = [ ];
+    };
+    "730" = {
+      game = "Counter-Strike 2";
+      folder = "game/csgo";
+      windowsWorkaround = false;
+      sourceTV = false;
+      engine = "source2";
+      executable = "game/bin/linuxsteamrt64/cs2";
+      forcedArguments = [ "-dedicated" ];
     };
   };
   blockedGameIds = {
     "635" =
       "There is no Linux version of Alien Swarm Dedicated Server. It also cannot be downloaded with the anonymous account.";
     "582400" = "There is no Linux version of Alien Swarm: Reactive Drop Dedicated Server.";
+    "1892930" = "The s&box decicated server is not yet available for Linux.";
   };
   get = id: if gameIds ? ${toString id} then gameIds.${toString id} else null;
   checkAssertion =

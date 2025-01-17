@@ -7,6 +7,11 @@ with pkgs.lib;
 let
   gameInfo = import ./modules/srcds/game-info.nix;
   renderedDoc = import ./render-doc.nix { inherit pkgs; };
+  gameTable = concatStringsSep "\n" (
+    mapAttrsToList (
+      n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |"
+    ) gameInfo.gameIds
+  );
   text = pkgs.writeText "README.md" ''
     # srcds-nix
     <!--
@@ -24,13 +29,12 @@ let
 
     ## Games
 
+    > [!WARNING]
+    > Source 2 games don't work yet. Don't try to run Counter-Strike 2 with this module until it's finished.
+
     | Game | AppID | Game Folder |
     | --- | --- | --- |
-    ${concatStringsSep "\n" (
-      mapAttrsToList (
-        n: v: "| ${v.game} | ${n} | ${if v.folder != null then v.folder else "(undefined)"} |"
-      ) gameInfo.gameIds
-    )}
+    ${gameTable}
 
     ## Install
 
