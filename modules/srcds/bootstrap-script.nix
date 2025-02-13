@@ -25,6 +25,8 @@
   autoUpdate,
   # Requires workaround to download
   windowsWorkaround,
+  # Arguments that are required no matter what
+  forcedArguments,
   # Command line arguments
   finalArgs,
   # Config for server.cfg
@@ -56,6 +58,7 @@ let
   #    extraCommandArgs) # this is put at the end to allow for manual overrides
   #);
   sExtraArgs = concatStringsSep " " (map (v: escapeShellArg v) finalArgs);
+  sForcedArguments = concatStringsSep " " (map (v: escapeShellArg v) forcedArguments);
   pidFile = "${gameFolder}/srcds.pid";
   absPidFile = "${stateDir}/${pidFile}";
 in
@@ -138,7 +141,18 @@ in
 
     whoami
 
-    ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run -console -game ${gameFolder} -pidfile srcds.pid ${sExtraArgs} < /dev/stdin
+    ${
+      if engine == "source1" then
+        ''
+          ${srcds-fhs-run}/bin/srcds-fhs-run $HOME/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh -- ./srcds_run ${sForcedArguments} -console -game ${gameFolder} ${sExtraArgs}
+        ''
+      else if engine == "source2" then
+        ''
+          ./${executable} ${sForcedArguments} ${sExtraArgs}
+        ''
+      else
+        throw "Unknown engine: ${engine}"
+    }< /dev/stdin
   '';
   stop = ''
     if test -f ${absPidFile}; then

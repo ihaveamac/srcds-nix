@@ -27,6 +27,12 @@ let
       gi = gameInfo.get v.appId;
     in
     if gi == null then true else gi.windowsWorkaround;
+  getForcedArguments =
+    v:
+    let
+      gi = gameInfo.get v.appId;
+    in
+    if gi == null then [ ] else gi.forcedArguments;
 in
 {
   options.services.srcds = {
@@ -145,6 +151,7 @@ in
             gameName = getGameName v;
             gameFolder = getGameFolder v;
             windowsWorkaround = needsWorkaround v;
+            forcedArgumens = getForcedArguments v;
             scripts = mkScripts {
               inherit
                 pkgs
@@ -153,6 +160,7 @@ in
                 gameFolder
                 gameName
                 windowsWorkaround
+                forcedArguments
                 ;
               inherit (v)
                 appId
