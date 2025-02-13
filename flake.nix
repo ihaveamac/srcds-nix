@@ -6,7 +6,11 @@
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs =
-    { self, nixpkgs, treefmt-nix }:
+    {
+      self,
+      nixpkgs,
+      treefmt-nix,
+    }:
     let
       systems = [
         "x86_64-linux"
