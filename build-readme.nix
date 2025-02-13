@@ -83,6 +83,25 @@ let
     ## Module options
 
     Please see [the module options list](OPTIONS.md).
+
+    ## Probably FAQ
+
+    ### What is the point of curl-symbol-downgrade.patch?
+
+    The Team Fortress 2 replay library (specifically `replay_srv.so`) wants to use libcurl with GnuTLS, but it wants some symbol version 3, while `curlWithGnuTls` has version 4. If it isn't, it gets upset and I think the server will not start.
+
+    ```
+     failed to dlopen /tf2server/bin/replay_srv.so error=/lib32/libcurl-gnutls.so.4: version `CURL_GNUTLS_3' not found (required by /tf2server/bin/replay_srv.so)
+     failed to dlopen /tf2server/bin/replay_srv.so error=/lib32/libcurl-gnutls.so.4: version `CURL_GNUTLS_3' not found (required by /tf2server/bin/replay_srv.so)
+     failed to dlopen replay_srv.so error=/lib32/libcurl-gnutls.so.4: version `CURL_GNUTLS_3' not found (required by bin/replay_srv.so)
+
+    ```
+
+    So, inspired by [this patch in the Arch User Repository](https://aur.archlinux.org/cgit/aur.git/tree/03_keep_symbols_compat.patch?h=libcurl3-gnutls), I have curl patched to downgrade this version. (Also, the software must be run through the Steam Runtime for it to actually work.)
+
+    To be honest I don't understand how any of this works. But it does work, and TF2 is happy.
+
+    This is not actually required for any other srcds games as far as I know.
   '';
 in
 pkgs.mkShellNoCC {
