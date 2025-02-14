@@ -158,7 +158,7 @@ in
             gameFolder = getGameFolder v;
             engine = getEngine v;
             windowsWorkaround = needsWorkaround v;
-            forcedArgumens = getForcedArguments v;
+            forcedArguments = getForcedArguments v;
             scripts = mkScripts {
               inherit
                 pkgs
