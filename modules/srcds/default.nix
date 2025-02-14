@@ -19,7 +19,7 @@ let
     let
       gi = gameInfo.get v.appId;
     in
-    if gi == null then "source1" else v.engine;
+    if gi == null then "source1" else gi.engine;
   getGameName =
     v:
     let
