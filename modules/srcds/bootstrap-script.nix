@@ -19,6 +19,8 @@
   stdinSocket,
   # Steam AppID
   appId,
+  # Game engine
+  engine,
   # Branch
   branch,
   # Auto update

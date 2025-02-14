@@ -14,6 +14,12 @@ let
   srcds-fhs-run = pkgs.callPackage ./srcds-fhs-run.nix { };
   getGameFolder =
     v: if v.gameFolder != "AUTOMATIC" then v.gameFolder else (gameInfo.get v.appId).folder;
+  getEngine =
+    v:
+    let
+      gi = gameInfo.get v.appId;
+    in
+    if gi == null then "source1" else v.engine;
   getGameName =
     v:
     let
@@ -150,6 +156,7 @@ in
           let
             gameName = getGameName v;
             gameFolder = getGameFolder v;
+            engine = getEngine v;
             windowsWorkaround = needsWorkaround v;
             forcedArgumens = getForcedArguments v;
             scripts = mkScripts {
@@ -161,6 +168,7 @@ in
                 gameName
                 windowsWorkaround
                 forcedArguments
+                engine
                 ;
               inherit (v)
                 appId
